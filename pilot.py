@@ -14,16 +14,9 @@ from datetime import datetime
 WORDS_FILE = "words.txt"
 DATA_DIRECTORY = "participant_data"
 
-WORD_DISPLAY_TIME = {
-    3: 3000,   # Experiment 3 uses 3 seconds
-    4: 3000,   # Experiment 4 uses 3 seconds
-    5: 3000,
-    6: 3000,
-    7: 3000,
-    8: 3000,
-}
 
-SHORT_WORD_DISPLAY_TIME = 1000  # Experiment 2
+normal_word_display_time=3000
+short_word_display_time=1000
 
 
 COLORS = [
@@ -150,10 +143,7 @@ def score_ordered_recall(correct_sequence, responses):
 
     return score
 
-
-# ============================================================
 # Main application
-# ============================================================
 
 class RecallExperiment:
 
@@ -178,29 +168,16 @@ class RecallExperiment:
                 "for the experiments."
             )
 
-        # Shuffle once so words are not deliberately selected
-        # in alphabetical/file order.
         random.shuffle(self.all_words)
-
-        # Words already used
         self.used_words = set()
-
-        # Experiment number
         self.current_experiment = 0
 
-        # Participant information
         self.participant_id = None
         self.output_file = None
         self.start_time = datetime.now().isoformat()
-
-        # Results
         self.results = []
-
-        # State
         self.allow_escape = False
         self.current_recall_callback = None
-
-        # Main container
         self.container = tk.Frame(
             self.root,
             bg="white"
@@ -211,10 +188,6 @@ class RecallExperiment:
         )
 
         self.show_participant_screen()
-
-    # --------------------------------------------------------
-    # General UI
-    # --------------------------------------------------------
 
     def clear_screen(self, bg="white"):
         for widget in self.container.winfo_children():
@@ -263,10 +236,6 @@ class RecallExperiment:
         button.pack(pady=20)
 
         return button
-
-    # --------------------------------------------------------
-    # Participant identification
-    # --------------------------------------------------------
 
     def show_participant_screen(self):
 
@@ -319,18 +288,12 @@ class RecallExperiment:
             DATA_DIRECTORY,
             exist_ok=True
         )
-
         self.output_file = unique_filename(
             participant_id
         )
-
         self.current_experiment = 1
-
         self.run_experiment()
 
-    # --------------------------------------------------------
-    # Word selection
-    # --------------------------------------------------------
 
     def get_new_words(self, number, three_letter_only=False):
 
@@ -366,10 +329,6 @@ class RecallExperiment:
 
         return selected
 
-    # --------------------------------------------------------
-    # Experiment sequencing
-    # --------------------------------------------------------
-
     def run_experiment(self):
 
         self.allow_escape = False
@@ -401,9 +360,6 @@ class RecallExperiment:
         else:
             self.finish_experiment()
 
-    # --------------------------------------------------------
-    # Experiment instructions
-    # --------------------------------------------------------
 
     def show_instructions(self, text, callback):
 
@@ -419,10 +375,7 @@ class RecallExperiment:
             callback
         )
 
-    # ========================================================
-    # Experiment 1
-    # ========================================================
-
+#Experiment 1
     def experiment_1(self):
 
         instructions = (
@@ -443,17 +396,14 @@ class RecallExperiment:
 
         self.present_words(
             words,
-            3000,
+            normal_word_display_time,
             lambda: self.show_free_recall(
                 words,
                 experiment=1
             )
         )
 
-    # ========================================================
-    # Experiment 2
-    # ========================================================
-
+#Experiment 2
     def experiment_2(self):
 
         instructions = (
@@ -475,17 +425,14 @@ class RecallExperiment:
 
         self.present_words(
             words,
-            SHORT_WORD_DISPLAY_TIME,
+            short_word_display_time,
             lambda: self.show_free_recall(
                 words,
                 experiment=2
             )
         )
 
-    # ========================================================
-    # Experiment 3
-    # ========================================================
-
+#Experiment 3
     def experiment_3(self):
 
         instructions = (
@@ -506,7 +453,7 @@ class RecallExperiment:
 
         self.present_words(
             words,
-            3000,
+            normal_word_display_time,
             lambda: self.show_color_task(
                 words
             )
@@ -518,12 +465,9 @@ class RecallExperiment:
             COLORS,
             3
         )
-
         self.clear_screen()
-
         self.color_sequence = colors
         self.color_index = 0
-
         self.show_next_color(
             words
         )
@@ -531,10 +475,8 @@ class RecallExperiment:
     def show_next_color(self, words):
 
         if self.color_index >= len(self.color_sequence):
-
             # Brief blank screen before recall
             self.clear_screen()
-
             self.root.after(
                 4000,
                 lambda: self.show_free_recall(
@@ -546,17 +488,13 @@ class RecallExperiment:
                     }
                 )
             )
-
             return
-
         color = self.color_sequence[
             self.color_index
         ]
-
         self.clear_screen(
             bg=color
         )
-
         self.color_index += 1
 
         self.root.after(
@@ -566,10 +504,7 @@ class RecallExperiment:
             )
         )
 
-    # ========================================================
-    # Experiment 4
-    # ========================================================
-
+#Experiment 4
     def experiment_4(self):
 
         instructions = (
@@ -589,7 +524,7 @@ class RecallExperiment:
 
         self.present_words(
             words,
-            3000,
+            normal_word_display_time,
             lambda: self.blank_delay(
                 words
             )
@@ -600,8 +535,6 @@ class RecallExperiment:
         self.clear_screen(
             bg="white"
         )
-
-        # Exactly 30 seconds
         self.root.after(
             30000,
             lambda: self.show_free_recall(
@@ -613,10 +546,7 @@ class RecallExperiment:
             )
         )
 
-    # ========================================================
-    # Experiment 5
-    # ========================================================
-
+#Experiment 5
     def experiment_5(self):
 
         instructions = (
@@ -641,17 +571,14 @@ class RecallExperiment:
 
         self.present_words(
             words,
-            3000,
+            normal_word_display_time,
             lambda: self.show_ordered_recall(
                 words,
                 experiment=5
             )
         )
 
-    # ========================================================
-    # Experiment 6
-    # ========================================================
-
+#Experiment 6
     def experiment_6(self):
 
         instructions = (
@@ -685,16 +612,14 @@ class RecallExperiment:
 
         self.present_words(
             triplets,
-            3000,
+            normal_word_display_time,
             lambda: self.show_ordered_recall(
                 triplets,
                 experiment=6
             )
         )
 
-    # ========================================================
-    # Experiment 7
-    # ========================================================
+#Experiment 7
 
     def experiment_7(self):
 
@@ -717,23 +642,19 @@ class RecallExperiment:
     def start_experiment_7(self):
 
         words = self.get_new_words(
-            10,
-            three_letter_only=True
+            10
         )
 
         self.present_words(
             words,
-            3000,
+            normal_word_display_time,
             lambda: self.show_ordered_recall(
                 words,
                 experiment=7
             )
         )
 
-    # ========================================================
-    # Experiment 8
-    # ========================================================
-
+#Experiment 8
     def experiment_8(self):
 
         instructions = (
@@ -755,23 +676,19 @@ class RecallExperiment:
     def start_experiment_8(self):
 
         words = self.get_new_words(
-            10,
-            three_letter_only=True
+            10
         )
 
         self.present_words(
             words,
-            3000,
+            normal_word_display_time,
             lambda: self.show_ordered_recall(
                 words,
                 experiment=8
             )
         )
 
-    # ========================================================
-    # Word presentation
-    # ========================================================
-
+#Word presentation
     def present_words(
         self,
         words,
@@ -795,13 +712,10 @@ class RecallExperiment:
         ):
 
             self.clear_screen()
-
-            # Small blank interval before recall
             self.root.after(
                 500,
                 self.presentation_callback
             )
-
             return
 
         word = self.presentation_words[
@@ -809,7 +723,6 @@ class RecallExperiment:
         ]
 
         self.clear_screen()
-
         self.add_label(
             word,
             size=60,
@@ -823,10 +736,7 @@ class RecallExperiment:
             self.show_next_word
         )
 
-    # ========================================================
-    # Free recall
-    # ========================================================
-
+#Free recall
     def show_free_recall(
         self,
         correct_words,
@@ -912,10 +822,7 @@ class RecallExperiment:
 
         self.current_recall_callback = submit
 
-    # ========================================================
-    # Ordered recall
-    # ========================================================
-
+#Ordered recall
     def show_ordered_recall(
         self,
         correct_sequence,
@@ -993,10 +900,6 @@ class RecallExperiment:
 
         self.current_recall_callback = submit
 
-    # ========================================================
-    # Escape handling
-    # ========================================================
-
     def handle_escape(self, event=None):
 
         if not self.allow_escape:
@@ -1004,7 +907,6 @@ class RecallExperiment:
 
         self.allow_escape = False
 
-        # Record that the recall was skipped.
         result = {
             "experiment": self.current_experiment,
             "type": "skipped",
@@ -1022,10 +924,6 @@ class RecallExperiment:
         self.save_data()
 
         self.next_experiment()
-
-    # ========================================================
-    # Moving to next experiment
-    # ========================================================
 
     def next_experiment(self):
 
@@ -1045,10 +943,6 @@ class RecallExperiment:
                 self.finish_experiment
             )
 
-    # ========================================================
-    # Saving
-    # ========================================================
-
     def save_data(self):
         """Save the participant's current data to a JSON file."""
 
@@ -1059,10 +953,8 @@ class RecallExperiment:
             "experiments": self.results
         }
 
-        # Make sure the output directory exists.
         os.makedirs(DATA_DIRECTORY, exist_ok=True)
 
-        # Write JSON safely and readably.
         with open(
             self.output_file,
             "w",
@@ -1079,7 +971,6 @@ class RecallExperiment:
 
         self.allow_escape = False
 
-        # Make one final save.
         self.save_data()
 
         self.clear_screen()
